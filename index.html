@@ -4,14 +4,9 @@
   <title>Fun Flappy Bird Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       background-color: black;
       overflow: hidden;
       font-family: sans-serif;
@@ -33,7 +28,6 @@
       user-select: none;
     }
     .button {
-      position: absolute;
       background-color: cyan;
       color: black;
       font-size: 20px;
@@ -41,7 +35,6 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      z-index: 20;
     }
     #startMenu {
       position: absolute;
@@ -51,27 +44,32 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
-      align-items: center;
+      z-index: 20;
     }
     #pauseButton {
+      position: absolute;
       top: 20px;
       right: 20px;
+      display: none;
+      z-index: 20;
     }
   </style>
 </head>
 <body>
 <div id="title">Fun Flappy Bird Game</div>
+
 <div id="startMenu">
   <button class="button" onclick="startGame('easy')">Easy</button>
   <button class="button" onclick="startGame('medium')">Medium</button>
   <button class="button" onclick="startGame('hard')">Hard</button>
 </div>
-<button id="pauseButton" class="button" style="position:absolute; display:none;" onclick="togglePause()">Pause</button>
+
+<button id="pauseButton" class="button" onclick="togglePause()">Pause</button>
 <canvas id="gameCanvas"></canvas>
+
 <script>
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
-
   const pauseButton = document.getElementById("pauseButton");
   const startMenu = document.getElementById("startMenu");
 
@@ -97,7 +95,6 @@
   let gameOver = false;
   let gameStarted = false;
   let paused = false;
-  let currentMode = "medium";
 
   function setPipeGapForMode(mode) {
     if (mode === "easy") pipeGap = 220;
@@ -221,11 +218,11 @@
 
   function startGame(mode) {
     setPipeGapForMode(mode);
-    currentMode = mode;
     gameStarted = true;
     paused = false;
     startMenu.style.display = "none";
     pauseButton.style.display = "block";
+    pauseButton.textContent = "Pause";
     resetGame();
   }
 
@@ -243,3 +240,4 @@
 </script>
 </body>
 </html>
+
