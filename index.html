@@ -59,6 +59,7 @@
   let pipeGap = 160;
   let frame = 0;
   let score = 0;
+  let highScore = localStorage.getItem("flappyHighScore") || 0;
   let gameOver = false;
 
   function drawBird() {
@@ -78,8 +79,9 @@
 
   function drawScore() {
     ctx.fillStyle = "cyan";
-    ctx.font = "32px sans-serif";
-    ctx.fillText(score, canvas.width / 2 - 10, 100);
+    ctx.font = "28px sans-serif";
+    ctx.fillText("Score: " + score, 20, 40);
+    ctx.fillText("High: " + highScore, 20, 80);
   }
 
   function updatePipes() {
@@ -118,6 +120,10 @@
 
   function gameLoop() {
     if (gameOver) {
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("flappyHighScore", highScore);
+      }
       ctx.fillStyle = "cyan";
       ctx.font = "40px sans-serif";
       ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2);
