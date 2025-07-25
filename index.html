@@ -53,24 +53,34 @@
       display: none;
       z-index: 20;
     }
+    #backButton {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: none;
+      z-index: 20;
+    }
   </style>
 </head>
 <body>
 <div id="title">Fun Flappy Bird Game</div>
 
 <div id="startMenu">
-  <button class="button" onclick="startGame('easy')">Start Easy</button>
-  <button class="button" onclick="startGame('medium')">Start Medium</button>
-  <button class="button" onclick="startGame('hard')">Start Hard</button>
+  <button class="button" onclick="startGame('easy')">Easy</button>
+  <button class="button" onclick="startGame('medium')">Medium</button>
+  <button class="button" onclick="startGame('hard')">Hard</button>
 </div>
 
 <button id="pauseButton" class="button" onclick="togglePause()">Pause</button>
+<button id="backButton" class="button" onclick="goBack()">Back</button>
+
 <canvas id="gameCanvas"></canvas>
 
 <script>
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
   const pauseButton = document.getElementById("pauseButton");
+  const backButton = document.getElementById("backButton");
   const startMenu = document.getElementById("startMenu");
 
   function resizeCanvas() {
@@ -228,6 +238,7 @@
     paused = false;
     startMenu.style.display = "none";
     pauseButton.style.display = "block";
+    backButton.style.display = "block";
     pauseButton.textContent = "Pause";
     resetGame();
   }
@@ -236,6 +247,15 @@
     paused = !paused;
     pauseButton.textContent = paused ? "Resume" : "Pause";
     if (!paused) gameLoop();
+  }
+
+  function goBack() {
+    gameStarted = false;
+    paused = false;
+    startMenu.style.display = "flex";
+    pauseButton.style.display = "none";
+    backButton.style.display = "none";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
   document.addEventListener("keydown", e => {
