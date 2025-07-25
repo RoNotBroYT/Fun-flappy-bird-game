@@ -32,30 +32,48 @@
       z-index: 10;
       user-select: none;
     }
-    #startButton {
+    .button {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       background-color: cyan;
       color: black;
-      font-size: 24px;
-      padding: 12px 24px;
+      font-size: 20px;
+      padding: 10px 20px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       z-index: 20;
     }
+    #startMenu {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+    #pauseButton {
+      top: 20px;
+      right: 20px;
+    }
   </style>
 </head>
 <body>
 <div id="title">Fun Flappy Bird Game</div>
-<button id="startButton">Start Game</button>
+<div id="startMenu">
+  <button class="button" onclick="startGame('easy')">Easy</button>
+  <button class="button" onclick="startGame('medium')">Medium</button>
+  <button class="button" onclick="startGame('hard')">Hard</button>
+</div>
+<button id="pauseButton" class="button" style="position:absolute; display:none;" onclick="togglePause()">Pause</button>
 <canvas id="gameCanvas"></canvas>
 <script>
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
-  const startButton = document.getElementById("startButton");
+
+  const pauseButton = document.getElementById("pauseButton");
+  const startMenu = document.getElementById("startMenu");
 
   function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -78,6 +96,14 @@
   let highScore = localStorage.getItem("flappyHighScore") || 0;
   let gameOver = false;
   let gameStarted = false;
+  let paused = false;
+  let currentMode = "medium";
+
+  function setPipeGapForMode(mode) {
+    if (mode === "easy") pipeGap = 220;
+    if (mode === "medium") pipeGap = 160;
+    if (mode === "hard") pipeGap = 100;
+  }
 
   function drawTextWithBackground(text, x, y) {
     const padding = 10;
@@ -145,7 +171,7 @@
   }
 
   function gameLoop() {
-    if (!gameStarted) return;
+    if (!gameStarted || paused) return;
 
     if (gameOver) {
       if (score > highScore) {
@@ -174,7 +200,7 @@
   }
 
   function flap() {
-    if (!gameStarted) return;
+    if (!gameStarted || paused) return;
     if (gameOver) {
       resetGame();
     } else {
@@ -193,16 +219,26 @@
     gameLoop();
   }
 
-  function startGame() {
-    startButton.style.display = "none";
+  function startGame(mode) {
+    setPipeGapForMode(mode);
+    currentMode = mode;
     gameStarted = true;
+    paused = false;
+    startMenu.style.display = "none";
+    pauseButton.style.display = "block";
     resetGame();
   }
 
-  startButton.addEventListener("click", startGame);
+  function togglePause() {
+    paused = !paused;
+    pauseButton.textContent = paused ? "Resume" : "Pause";
+    if (!paused) gameLoop();
+  }
+
   document.addEventListener("keydown", e => {
     if (e.code === "Space") flap();
   });
+
   document.addEventListener("touchstart", flap);
 </script>
 </body>
