@@ -59,9 +59,9 @@
 <div id="title">Fun Flappy Bird Game</div>
 
 <div id="startMenu">
-  <button class="button" onclick="startGame('easy')">Easy</button>
-  <button class="button" onclick="startGame('medium')">Medium</button>
-  <button class="button" onclick="startGame('hard')">Hard</button>
+  <button class="button" onclick="startGame('easy')">Start Easy</button>
+  <button class="button" onclick="startGame('medium')">Start Medium</button>
+  <button class="button" onclick="startGame('hard')">Start Hard</button>
 </div>
 
 <button id="pauseButton" class="button" onclick="togglePause()">Pause</button>
@@ -91,10 +91,15 @@
   let pipeGap = 160;
   let frame = 0;
   let score = 0;
-  let highScore = localStorage.getItem("flappyHighScore") || 0;
+  let highScores = {
+    easy: localStorage.getItem("flappyHighScore_easy") || 0,
+    medium: localStorage.getItem("flappyHighScore_medium") || 0,
+    hard: localStorage.getItem("flappyHighScore_hard") || 0
+  };
   let gameOver = false;
   let gameStarted = false;
   let paused = false;
+  let currentMode = "medium";
 
   function setPipeGapForMode(mode) {
     if (mode === "easy") pipeGap = 220;
@@ -104,9 +109,9 @@
 
   function drawTextWithBackground(text, x, y) {
     const padding = 10;
-    ctx.font = "28px sans-serif";
+    ctx.font = "24px sans-serif";
     const width = ctx.measureText(text).width + padding * 2;
-    const height = 36;
+    const height = 34;
     ctx.fillStyle = "black";
     ctx.fillRect(x - padding, y - 28, width, height);
     ctx.fillStyle = "cyan";
@@ -130,7 +135,7 @@
 
   function drawScore() {
     drawTextWithBackground("Score: " + score, 20, 40);
-    drawTextWithBackground("High: " + highScore, 20, 80);
+    drawTextWithBackground("High: " + highScores[currentMode], 20, 80);
   }
 
   function updatePipes() {
@@ -171,9 +176,9 @@
     if (!gameStarted || paused) return;
 
     if (gameOver) {
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem("flappyHighScore", highScore);
+      if (score > highScores[currentMode]) {
+        highScores[currentMode] = score;
+        localStorage.setItem("flappyHighScore_" + currentMode, score);
       }
       ctx.fillStyle = "cyan";
       ctx.font = "40px sans-serif";
@@ -217,6 +222,7 @@
   }
 
   function startGame(mode) {
+    currentMode = mode;
     setPipeGapForMode(mode);
     gameStarted = true;
     paused = false;
@@ -240,4 +246,3 @@
 </script>
 </body>
 </html>
-
