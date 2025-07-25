@@ -32,14 +32,30 @@
       z-index: 10;
       user-select: none;
     }
+    #startButton {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: cyan;
+      color: black;
+      font-size: 24px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 20;
+    }
   </style>
 </head>
 <body>
 <div id="title">Fun Flappy Bird Game</div>
+<button id="startButton">Start Game</button>
 <canvas id="gameCanvas"></canvas>
 <script>
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
+  const startButton = document.getElementById("startButton");
 
   function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -61,6 +77,18 @@
   let score = 0;
   let highScore = localStorage.getItem("flappyHighScore") || 0;
   let gameOver = false;
+  let gameStarted = false;
+
+  function drawTextWithBackground(text, x, y) {
+    const padding = 10;
+    ctx.font = "28px sans-serif";
+    const width = ctx.measureText(text).width + padding * 2;
+    const height = 36;
+    ctx.fillStyle = "black";
+    ctx.fillRect(x - padding, y - 28, width, height);
+    ctx.fillStyle = "cyan";
+    ctx.fillText(text, x, y);
+  }
 
   function drawBird() {
     ctx.fillStyle = "cyan";
@@ -78,10 +106,8 @@
   }
 
   function drawScore() {
-    ctx.fillStyle = "cyan";
-    ctx.font = "28px sans-serif";
-    ctx.fillText("Score: " + score, 20, 40);
-    ctx.fillText("High: " + highScore, 20, 80);
+    drawTextWithBackground("Score: " + score, 20, 40);
+    drawTextWithBackground("High: " + highScore, 20, 80);
   }
 
   function updatePipes() {
@@ -119,6 +145,8 @@
   }
 
   function gameLoop() {
+    if (!gameStarted) return;
+
     if (gameOver) {
       if (score > highScore) {
         highScore = score;
@@ -146,18 +174,13 @@
   }
 
   function flap() {
+    if (!gameStarted) return;
     if (gameOver) {
       resetGame();
     } else {
       velocity = jump;
     }
   }
-
-  document.addEventListener("keydown", e => {
-    if (e.code === "Space") flap();
-  });
-
-  document.addEventListener("touchstart", flap);
 
   function resetGame() {
     birdY = canvas.height / 2;
@@ -170,7 +193,17 @@
     gameLoop();
   }
 
-  gameLoop();
+  function startGame() {
+    startButton.style.display = "none";
+    gameStarted = true;
+    resetGame();
+  }
+
+  startButton.addEventListener("click", startGame);
+  document.addEventListener("keydown", e => {
+    if (e.code === "Space") flap();
+  });
+  document.addEventListener("touchstart", flap);
 </script>
 </body>
 </html>
